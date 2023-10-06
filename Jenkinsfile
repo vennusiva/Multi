@@ -3,7 +3,7 @@ pipeline
     agent any
     stages
     {
-        stage('Downloade')
+    stage('Testing')
         {
             steps
             {
@@ -11,37 +11,19 @@ pipeline
                 {
                     try
                     {
-                      git 'https://github.com/vennusiva/Multi.git'
+                      git 'https://github.com/intelliqittrainings/functionaltesting.git'
+               sh 'java -jar /home/ubuntu/.jenkins/workspace/DeclarativePipeline/testing.jar'
                     }
-                    catch(Exception e1)
+                    catch(Exception e4)
                     {
-                        mail bcc: '', body: 'Download fail ', cc: '', from: '', replyTo: '', subject: 'Download fail', to: 'git.admin@gmail.com'
-                        exit(1)
-                    }
-                }
-
-            }
-        }
-        stage('Build')
-        {
-            steps
-            {
-                script
-                {
-                    try
-                    {
-                     sh 'mvn package'
-                    }
-                    catch(Exception e2)
-                    {
-                    mail bcc: '', body: 'Download fail ', cc: '', from: '', replyTo: '', subject: 'Build fail', to: 'git.build@gmail.com'
+                    mail bcc: '', body: 'Download fail ', cc: '', from: '', replyTo: '', subject: 'Download fail', to: 'git.testing@gmail.com'
                     exit(1)
                     }
                 }
 
             }
         }
-        stage('Deploy')
+        stage('Delivery')
         {
             steps
             {
@@ -49,16 +31,16 @@ pipeline
                 {
                     try
                     {
-                     deploy adapters: [tomcat9(credentialsId: '7a85843d-77ba-453a-b51d-5ee9fe622849', path: '', url: 'http://172.31.95.132:8080')], contextPath: 'Testapp', war: '**/*.war'
+                     deploy adapters: [tomcat9(credentialsId: '7a85843d-77ba-453a-b51d-5ee9fe622849', path: '', url: 'http://172.31.93.21:8080')], contextPath: 'Prod', war: '**/*.war'
                     }
-                    catch(Exception e3)
+                    catch(Exception e5)
                     {
-                        mail bcc: '', body: 'Download fail ', cc: '', from: '', replyTo: '', subject: 'Download fail', to: 'git.Deploy@gmail.com'
+                        mail bcc: '', body: 'Download fail ', cc: '', from: '', replyTo: '', subject: 'Download fail', to: 'git.delivary@gmail.com'
                         exit(1)
                     }
                 }
 
             }
         }
-	}
-	}
+    }
+}
