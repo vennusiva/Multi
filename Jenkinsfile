@@ -3,55 +3,62 @@ pipeline
     agent any
     stages
     {
-        stage('ContinuousDownload')
+        stage('Downloade')
         {
             steps
             {
-                git 'https://github.com/intelliqittrainings/maven.git'
+                script
+                {
+                    try
+                    {
+                      git 'https://github.com/vennusiva/Multi.git'
+                    }
+                    catch(Exception e1)
+                    {
+                        mail bcc: '', body: 'Download fail ', cc: '', from: '', replyTo: '', subject: 'Download fail', to: 'git.admin@gmail.com'
+                        exit(1)
+                    }
+                }
+
             }
         }
-        stage('ContinuousBuild')
+        stage('Build')
         {
             steps
             {
-                sh 'mvn package'
+                script
+                {
+                    try
+                    {
+                     sh 'mvn package'
+                    }
+                    catch(Exception e2)
+                    {
+                    mail bcc: '', body: 'Download fail ', cc: '', from: '', replyTo: '', subject: 'Build fail', to: 'git.build@gmail.com'
+                    exit(1)
+                    }
+                }
+
             }
         }
-        stage('ContinuousDeployment')
+        stage('Deploy')
         {
             steps
             {
-               deploy adapters: [tomcat9(credentialsId: 'bfb67f1d-2f4e-430c-bb8d-30584116bd00', path: '', url: 'http://172.31.51.212:9090')], contextPath: 'test1', war: '**/*.war'
+                script
+                {
+                    try
+                    {
+                     deploy adapters: [tomcat9(credentialsId: '7a85843d-77ba-453a-b51d-5ee9fe622849', path: '', url: 'http://172.31.95.132:8080')], contextPath: 'Testapp', war: '**/*.war'
+                    }
+                    catch(Exception e3)
+                    {
+                        mail bcc: '', body: 'Download fail ', cc: '', from: '', replyTo: '', subject: 'Download fail', to: 'git.Deploy@gmail.com'
+                        exit(1)
+                    }
+                }
+
             }
         }
-        stage('ContinuousTesting')
-        {
-            steps
-            {
-               git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
-               sh 'java -jar /home/ubuntu/.jenkins/workspace/DeclarativePipeline1/testing.jar'
-            }
-        }
-       
-    }
-    
-    post
-    {
-        success
-        {
-            input message: 'Need approval from the DM!', submitter: 'srinivas'
-               deploy adapters: [tomcat9(credentialsId: 'bfb67f1d-2f4e-430c-bb8d-30584116bd00', path: '', url: 'http://172.31.50.204:9090')], contextPath: 'prod1', war: '**/*.war'
-        }
-        failure
-        {
-            mail bcc: '', body: 'Continuous Integration has failed', cc: '', from: '', replyTo: '', subject: 'CI Failed', to: 'selenium.saikrishna@gmail.com'
-        }
-       
-    }
-    
-    
-    
-    
-    
-    
-}
+	}
+	}
